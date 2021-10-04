@@ -1,0 +1,90 @@
+-transactions
+    -deposits
+    -withdrawals
+    -balance
+    -dates
+
+-Packages
+    -basic
+    -standard
+    -premium
+
+Payment details
+    -payment type (card, transfer, etc)
+    -card details (number, expiry, name)
+
+-wallet
+    -balance
+    -
+
+-investment
+    -amount
+    -package name
+    -interst rate
+    -date started
+
+-upgrade investment
+    -
+
+calculate accuntBalance
+
+let duration = dreatedAt (date of investment) - currentMonth
+get present value of each investment
+    foreach investment
+        get initil deposit
+        get package interest rate
+        get duration
+        get current month(date)
+        
+                 100k        15%
+        let a = (deposit * interest)  
+
+        if(duration >= 6 months){
+               //investment is mature. Cannot grow again                 
+        let maturityValue = a * maturityduration 
+        // maturityValue = 15k * 6 = 90k
+        }else{
+              //investment is not yet mature. Can still grow again
+        let currentValue = a * duration 
+        // currentValue = 15k * 3 = 45k
+        }
+
+
+let currentTotalFunds = sum of all investments currentValue
+
+let maturityTotalFunds = sum of all investments maturityValue
+
+let  currentAccountBalance = totalInvestmentAndProfit - totalWithdrawals
+
+
+investments                     withdrawals
+(at 6 months) matured           at maturity time
+190k                            100k                     
+
+(at 4 months)not mature
+160k 
+
+(at 2 months)not mature
+130k
+
+totalInvested
+100k 
+100k
+100k +
+___
+300k
+
+totalInvestmentAndProfit
+190k
+160k
+130k +
+___
+480k
+
+totalAvailableFund (totalInvestmentAndProfit - totalWithdrawals)
+480k
+100k -
+____
+380k
+
+totalAvailableFund = currentAccountBalance
