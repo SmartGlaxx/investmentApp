@@ -45,19 +45,27 @@ const getInvestments = async(req, res)=>{
                 const deposit = item.amount
                 const package = item.packageName
                 const interest = item.interestRate / 100
-                const currentDate = thisPeriod
+                // const currentDate = thisPeriod
+                const currentDate = new Date(2022, 03, 02)
                 const investmentDate = item.createdAt
-                const maturityMonth = item.createdAt.getMonth() + 6
-                const maturityDateNumber = new Date().setMonth(maturityMonth)
-                const investmentDuration = monthDiff(investmentDate, currentDate)
-                // const investmentDurationValue = new Date(investmentDuration)
+                const maturityMonth = item.createdAt.getMonth() + 6  //6 or investment duration choosen for plan
+                const maturityDateNumber = new Date(item.createdAt).setMonth(maturityMonth)
+                let investmentDuration = monthDiff(investmentDate, currentDate)
                 const profitPerMonth = deposit * interest
-                const cumulativeProfit = profitPerMonth * investmentDuration
-                //const res = new Date(currentDration)
+                let cumulativeProfit = profitPerMonth * investmentDuration
                 const maturityFullDate = new Date(maturityDateNumber)
-           
+               
+                if(currentDate >= maturityFullDate){
+                    console.log("matured")
+                    investmentDuration = 6 
+                    cumulativeProfit = profitPerMonth * investmentDuration
+                    console.log(cumulativeProfit, investmentDuration, currentDate, profitPerMonth)
+                }else{
+                    console.log("growing")
+                    console.log(cumulativeProfit, investmentDuration, currentDate,profitPerMonth)
+                }
                 investments.push(item.amount)
-                profits.push(profitPerMonth)             
+                profits.push(profitPerMonth)           
 
                 return({_id, deposit, package, interest, investmentDate, maturityFullDate, currentDate, investmentDate,
                      investmentDuration, profitPerMonth, cumulativeProfit, userId})
