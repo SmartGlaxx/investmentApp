@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const transactionSchema = mongoose.Schema({
     deposit : Number, 
-    withdrawals : Number,
+    withdrawal : Number,
     balance : Number,
     userId : String
 },

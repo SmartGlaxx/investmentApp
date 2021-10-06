@@ -19,20 +19,13 @@ const adminGetInvestments = async(req, res)=>{
 
 const getInvestments = async(req, res)=>{
     const {id} = req.params
-    
-
+    const userId = id
    try{ 
         const investmentData = await Investment.find({userId : id})
         
         if(!investmentData){
             return res.status(200).json({message : "Request error. Please retry."})
         }
-        // function diff_months(dt2, dt1) 
-        // {
-        // var diff =(dt2.getTime() - dt1.getTime()) / 1000;
-        // diff /= (60 * 60 * 24 * 7 * 4) ;
-        // return Math.abs(Math.floor(diff - 2));
-        // }
 
         function monthDiff(d1, d2) {
             var months;
@@ -42,13 +35,13 @@ const getInvestments = async(req, res)=>{
             return months <= 0 ? 0 : months;
         }
         const calcInvestment =async()=>{
-            const thisPeriod = new Date()
-            // const maturityMonth = thisPeriod.getMonth() + 6
-            //const maturityDate =new Date().setMonth(maturityMonth)
-            
-
+        const thisPeriod = new Date()
+        
+        const investments = []
+        const profits = []
+        let totalinvestmentAndProfit = 0
         const investFulldata = await investmentData.map(item =>{
-
+                const _id = item._id
                 const deposit = item.amount
                 const package = item.packageName
                 const interest = item.interestRate / 100
@@ -56,23 +49,42 @@ const getInvestments = async(req, res)=>{
                 const investmentDate = item.createdAt
                 const maturityMonth = item.createdAt.getMonth() + 6
                 const maturityDateNumber = new Date().setMonth(maturityMonth)
-                const currentDuration = monthDiff(investmentDate, currentDate)
-                const currentDurationValue = new Date(currentDuration)
-                const profitValue = deposit * interest
-                const cumulativeProfit = profitValue * currentDurationValue
+                const investmentDuration = monthDiff(investmentDate, currentDate)
+                // const investmentDurationValue = new Date(investmentDuration)
+                const profitPerMonth = deposit * interest
+                const cumulativeProfit = profitPerMonth * investmentDuration
                 //const res = new Date(currentDration)
                 const maturityFullDate = new Date(maturityDateNumber)
-                
-                return({deposit, package, interest, investmentDate, maturityFullDate, currentDate, investmentDate,
-                     currentDuration, profitValue, currentDurationValue, cumulativeProfit})
+           
+                investments.push(item.amount)
+                profits.push(profitPerMonth)             
+
+                return({_id, deposit, package, interest, investmentDate, maturityFullDate, currentDate, investmentDate,
+                     investmentDuration, profitPerMonth, cumulativeProfit, userId})
             })
+
             
+               const totalInvestment =  investments.reduce(function(accumulator, currentValue) {
+                return accumulator + currentValue;
+                }, 0);
+
+                const totalProfit =  profits.reduce(function(accumulator, currentValue) {
+                return accumulator + currentValue;
+                }, 0);
+
+                totalinvestmentAndProfit = totalInvestment + totalProfit
+              
+            investFulldata.push({
+                'totalInvestment':totalInvestment, 
+                'totalProfit' : totalProfit, 
+                'totalinvestmentAndProfit' : totalinvestmentAndProfit
+            })
             return investFulldata
-            
+    
         }
       
        const response =  await calcInvestment()
-       res.status(200).json({response})
+       res.status(200).json({count : response.length, response})
     }catch(error){
         res.status(500).json({error})
     }
@@ -94,18 +106,18 @@ const getInvestment = async(req, res)=>{
 }
 
 const createInvestment = async(req, res)=>{
-       
+    const {id} = req.params
    try{ 
-        const {id} = req.params
+        
         const {amount} = req.body
         const {packageName} = req.body
         const {interestRate} = req.body
         const userId = id
         const userData = await Auth.findOne({_id : id})
-        const userProfile = await User.find({userId : id})
-        const userInvestments = await Investment.find({userId : id})
-        const userTransactions = await Transaction.find({userId : id})
-        const userPaymentDetail = await PaymentDetail.find({userId : id})
+        // const userProfile = await User.find({userId : id})
+        // const userInvestments = await Investment.find({userId : id})
+        // const userTransactions = await Transaction.find({userId : id})
+        // const userPaymentDetail = await PaymentDetail.find({userId : id})
         
 
         if(!userData){
@@ -159,17 +171,18 @@ const createInvestment = async(req, res)=>{
         // }
         // getInvementDetails()
 
+    
+        
         const invetmentInfo = {
-            amount,
-            packageName,
-            interestRate,
-            maturityDate,
-            userId 
+            amount : amount,
+            packageName : packageName,
+            interestRate : interestRate,
+            maturityDate : maturityDate,
+            userId : userId  
         }
-
-        console.log('req,body',invetmentInfo)
-        const investData = await Investment.create({invetmentInfo})
-        res.status(200).json({invetmentInfo})
+        console.log(invetmentInfo)
+        const investData = await Investment.create(invetmentInfo)
+        res.status(200).json({investData})
     }catch(error){
         res.status(500).json({error})
     }

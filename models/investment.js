@@ -5,7 +5,7 @@ const investmentSchema = mongoose.Schema({
     packageName : String,
     interestRate : Number,
     totalInvestmentAndPofit : Number,
-    maturityPeriod : String,
+    maturityPeriod : Date,
     accountBalance : Number,
     userId : String
 },

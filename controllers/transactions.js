@@ -36,6 +36,32 @@ const getTransactions = async(req, res)=>{
         if(!transactionData){
             return res.status(200).json({message : "Request error. Please retry."})
         }
+        const deposits = []
+        const withdrawals = []
+        const transactionFullData = await transactionData.map(item =>{
+            
+            const userId = item.userId
+            const deposit = item.deposit
+            const withdrawal = item.withdrawal
+            const createdAt = item.createdAt
+
+            if(deposit){
+                deposits.push(deposit)
+            }
+            if(withdrawal){
+                withdrawals.push(withdrawal)
+            }
+            
+
+        })
+        const totalWithdrawals = withdrawals.reduce((accuulator, currentValue)=>{
+            return accuulator + currentValue
+        },0)
+        const totalDeposits = deposits.reduce((accuulator, currentValue)=>{
+            return accuulator + currentValue
+        },0)
+
+        transactionData.push({'totalDeposits' : totalDeposits,'totalWithdrawals' : totalWithdrawals})
         res.status(200).json({ Count : transactionData.length, transactionData})
     }catch(error){
         res.status(500).json({error})

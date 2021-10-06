@@ -38,8 +38,6 @@ const createUserController = async(req,res)=>{
         if(!userData){
             res.status(200).json({message : 'User with given id not found.'})
         }
-
-        
         
         await User.create(req.body)
         }catch(error){
