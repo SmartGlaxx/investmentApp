@@ -1,0 +1,3 @@
+when posting to create a value (say creting user from auth),
+pass in the userId into the form (req.body) as well as in the params.
+the one in the body should be a "hidden" type
