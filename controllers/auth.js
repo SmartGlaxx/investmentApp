@@ -6,7 +6,7 @@ const saltRounds = 10;
 
 const getUsersAuthController = async(req, res)=>{
     try{
-    const usersAuth = await Auth.find({}).select('firstname lastname email')
+    const usersAuth = await Auth.find({}).select('firstname lastname email username')
     res.status(200).json({count : usersAuth.length, usersAuth})
     }catch(error){
         res.status(500).json({message : "An error occured fetching Users Auth. Please try again."})
