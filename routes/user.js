@@ -7,7 +7,7 @@ router.get('/', adminGetUsersController)
 
 router.get('/:id/:username', getUserController)
 
-router.post('/:id', createUserController)
+router.post('/:id/:username', createUserController)
 
 router.patch('/:id/:username', updateUserController)
 
