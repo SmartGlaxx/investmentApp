@@ -1,15 +1,20 @@
 const mongoose = require('mongoose')
 
 const userSchema = mongoose.Schema({
-    userId : String,
+    userId :  mongoose.Schema.Types.ObjectId,
     firstname :  String,
     lastname : String,
     username : String, //unique
     email : String,
-    profilePicture : String,
     address : String,
     phone : Number, 
-    authenticated : Boolean
+    authenticated : Boolean,
+
+	profilePicture : String,
+    nextOfKin : String,
+    nextOfKinPhone: Number,
+ 	bankName:  String,
+    accountNumber : String
 },
 { timestamps: true }
 )

@@ -3,7 +3,7 @@ const express = require('express')
 const authRouter = require('./routes/auth')
 const usersRouter = require('./routes/user')
 const investRouter = require('./routes/investment')
-const paymentRouter = require('./routes/paymentDetails')
+// const paymentRouter = require('./routes/paymentDetails')
 const transactiontRouter = require('./routes/transactions')
 const connection = require('./db/connect')
 const { urlencoded } = require('express')
@@ -13,6 +13,7 @@ const app = express()
 
 app.use(urlencoded({extended : false}))
 app.use(express.json())
+
 
 app.options("/*", function(req, res, next){
   res.header('Access-Control-Allow-Origin', '*');
@@ -28,7 +29,7 @@ app.all('*', function(req, res, next) {
 app.use('/api/v1/auth',authRouter)
 app.use('/api/v1/users', usersRouter)
 app.use('/api/v1/invest', investRouter)
-app.use('/api/v1/payment-details', paymentRouter)
+//app.use('/api/v1/payment-details', paymentRouter)
 app.use('/api/v1/transactions', transactiontRouter)
 
 const starter = async()=>{

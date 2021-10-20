@@ -54,6 +54,9 @@ const authSignupController = async(req, res)=>{
             const hashedPasword = await bcrypt.hash(password, salt)
         
             const singupdData = await Auth.create({firstname, lastname, username, email , password : hashedPasword })
+            //if(singupdData){
+              //    send email here  
+           // }else{give eror warning}
             return res.status(200).json({singupdData})
         }
     }catch(error){
