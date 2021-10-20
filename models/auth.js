@@ -1,16 +1,16 @@
 const mongoose = require('mongoose')
 
 const authSchema = mongoose.Schema({
-    firstname : {
-        type : String,
-        required : [true, 'Please enter your first name.'],
-        trim : true
-    },
-    lastname : {
-        type : String,
-        required : [true, 'Please enter your last name.'],
-        trim : true
-    },
+    // firstname : {
+    //     type : String,
+    //    // required : [true, 'Please enter your first name.'],
+    //     trim : true
+    // },
+    // lastname : {
+    //     type : String,
+    //    // required : [true, 'Please enter your last name.'],
+    //     trim : true
+    // },
     username : {
         type : String,
         required : [true, 'Please enter a username.'],

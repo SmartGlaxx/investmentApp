@@ -41,8 +41,8 @@ const authLoginController = async(req, res)=>{
 
 
 const authSignupController = async(req, res)=>{
-    const firstname = req.body.firstname
-    const lastname = req.body.lastname
+    // const firstname = req.body.firstname
+    // const lastname = req.body.lastname
     const username = req.body.username.toLowerCase()
     const email = req.body.email.toLowerCase()
     const password = req.body.password
@@ -53,7 +53,7 @@ const authSignupController = async(req, res)=>{
             const salt = await bcrypt.genSalt(10)
             const hashedPasword = await bcrypt.hash(password, salt)
         
-            const singupdData = await Auth.create({firstname, lastname, username, email , password : hashedPasword })
+            const singupdData = await Auth.create({ username, email , password : hashedPasword })
             //if(singupdData){
               //    send email here  
            // }else{give eror warning}
