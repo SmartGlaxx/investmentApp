@@ -109,11 +109,20 @@ const getInvestments = async(req, res)=>{
         }
 
         function dateDiff(d1, d2) {
-            var days;
-            days = (d2.getFullYear() - d1.getFullYear()) * 12;
-            days -= d1.getDate();
-            days += d2.getDate();
-            return days <= 0 ? 0 : days;
+            // var days;
+            // days = (d2.getFullYear() - d1.getFullYear()) * 365;
+            // days -= d1.getDate();
+            // days += d2.getDate();
+            // return days <= 0 ? 0 : days;
+
+            // let d1 = new Date().toISOString().slice(0, 10)
+            // let dOne = d1.toISOString().slice(0, 10)
+            // let dTwo = d2.toISOString().slice(0, 10)
+
+            var diffInTime = d2.getTime() - d1.getTime();
+            var diffInDate = diffInTime / (1000 * 3600 * 24);
+              
+            return diffInDate
         }
 
         const calcInvestment =async()=>{
@@ -129,8 +138,8 @@ const getInvestments = async(req, res)=>{
                 const packageName = item.packageName
                 const interest = item.interestRate 
                 const interestRate = item.interestRate / 100 / 30 // 100 to give percentage and 30 to give daily value
-                const currentDate = thisPeriod
-                // const currentDate = new Date(2022, 03, 10)
+                //const currentDate = new Date().toISOString().slice(0, 10)
+                const currentDate = new Date(2022,02,29)
                 const investmentDate = item.createdAt
                 const maturityDate = item.createdAt.getDate() + 180  //6 or investment duration choosen for plan
                 const maturityDateNumber = new Date(item.createdAt).setDate(maturityDate)
@@ -139,7 +148,7 @@ const getInvestments = async(req, res)=>{
                 let cumulativeProfit = profitPerDay * investmentDuration
                 const maturityFullDate = new Date(maturityDateNumber)
                
-               console.log( deposit, interestRate,item.interestRate, profitPerDay)
+               console.log( investmentDuration, investmentDate, currentDate)
 
 
                 if(currentDate >= maturityFullDate){
