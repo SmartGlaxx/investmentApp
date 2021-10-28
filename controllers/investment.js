@@ -139,7 +139,7 @@ const getInvestments = async(req, res)=>{
                 const interest = item.interestRate 
                 const interestRate = item.interestRate / 100 / 30 // 100 to give percentage and 30 to give daily value
                 //const currentDate = new Date().toISOString().slice(0, 10)
-                const currentDate = new Date(2022,02,29)
+                const currentDate = new Date()
                 const investmentDate = item.createdAt
                 const maturityDate = item.createdAt.getDate() + 180  //6 or investment duration choosen for plan
                 const maturityDateNumber = new Date(item.createdAt).setDate(maturityDate)
