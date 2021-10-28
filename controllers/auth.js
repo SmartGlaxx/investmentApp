@@ -60,7 +60,7 @@ const authSignupController = async(req, res)=>{
             return res.status(200).json({singupdData})
         }
     }catch(error){
-        res.status(500).json("error")
+        res.status(400).json("error")
     }
 }
 
