@@ -182,11 +182,11 @@ const getInvestments = async(req, res)=>{
 
                 totalinvestmentAndProfit = totalInvestment + totalProfit
               
-            investFulldata.push({
-                'totalInvestment':totalInvestment, 
-                'totalProfit' : totalProfit, 
-                'totalinvestmentAndProfit' : totalinvestmentAndProfit
-            })
+//             investFulldata.push({
+//                 'totalInvestment':totalInvestment, 
+//                 'totalProfit' : totalProfit, 
+//                 'totalinvestmentAndProfit' : totalinvestmentAndProfit
+//             })
             return investFulldata
     
         }
