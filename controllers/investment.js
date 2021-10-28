@@ -127,6 +127,7 @@ const getInvestments = async(req, res)=>{
                 const _id = item._id
                 const deposit = item.amount
                 const packageName = item.packageName
+                const interest = item.interestRate 
                 const interestRate = item.interestRate / 100 / 30 // 100 to give percentage and 30 to give daily value
                 const currentDate = thisPeriod
                 // const currentDate = new Date(2022, 03, 10)
@@ -138,7 +139,7 @@ const getInvestments = async(req, res)=>{
                 let cumulativeProfit = profitPerDay * investmentDuration
                 const maturityFullDate = new Date(maturityDateNumber)
                
-               console.log( deposit, interestRate, profitPerDay)
+               console.log( deposit, interestRate,item.interestRate, profitPerDay)
 
 
                 if(currentDate >= maturityFullDate){
@@ -147,17 +148,17 @@ const getInvestments = async(req, res)=>{
                     
                     investments.push(item.deposit)
                     profits.push(profitPerDay)   
-                    return({_id, deposit, packageName, interestRate, investmentDate, maturityFullDate, currentDate,
+                    return({_id, deposit, packageName, interest, interestRate, investmentDate, maturityFullDate, currentDate,
                      investmentDate, investmentDuration, profitPerDay, cumulativeProfit, userId, username})
                 }else{
                     investments.push(item.deposit)
                     profits.push(profitPerDay)   
-                    return({_id, deposit, packageName, interestRate, investmentDate, maturityFullDate, currentDate, 
+                    return({_id, deposit, packageName, interest, interestRate, investmentDate, maturityFullDate, currentDate, 
                         investmentDate,investmentDuration, profitPerDay, cumulativeProfit, userId, username})
                 }
                         
 
-                return({_id, deposit, packageName, interestRate, investmentDate, maturityFullDate, currentDate, investmentDate,
+                return({_id, deposit, packageName, interest, interestRate, investmentDate, maturityFullDate, currentDate, investmentDate,
                      investmentDuration, profitPerDay, cumulativeProfit, userId})
             })
                        
