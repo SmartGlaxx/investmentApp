@@ -14,7 +14,10 @@ const userSchema = mongoose.Schema({
     nextOfKin : String,
     nextOfKinPhone: Number,
  	bankName:  String,
-    accountNumber : String
+    accountNumber : String,
+	
+    smsVerifyCode : Number,
+    smsVerified : Boolean
 },
 { timestamps: true }
 )
