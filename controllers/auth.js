@@ -40,7 +40,31 @@ const authLoginController = async(req, res)=>{
 
 
 
-const authSignupController = async(req, res)=>{
+// const authSignupController = async(req, res)=>{
+//     // const firstname = req.body.firstname
+//     // const lastname = req.body.lastname
+//     const username = req.body.username.toLowerCase()
+//     const email = req.body.email.toLowerCase()
+//     const password = req.body.password
+//    try{ 
+//         if(password.length < 8){
+//             return res.status(200).json({message : "Password cannot be less than 8 characters."})
+//         }else{
+//             const salt = await bcrypt.genSalt(10)
+//             const hashedPasword = await bcrypt.hash(password, salt)
+        
+//             const singupdData = await Auth.create({ username, email , password : hashedPasword })
+//             //if(singupdData){
+//               //    send email here  
+//            // }else{give eror warning}
+//             return res.status(200).json({singupdData})
+//         }
+//     }catch(error){
+//         res.status(500).json({error})
+//     }
+// }
+
+const authSignupController = async(req, res, next)=>{
     // const firstname = req.body.firstname
     // const lastname = req.body.lastname
     const username = req.body.username.toLowerCase()
@@ -53,11 +77,17 @@ const authSignupController = async(req, res)=>{
             const salt = await bcrypt.genSalt(10)
             const hashedPasword = await bcrypt.hash(password, salt)
         
-            const singupdData = await Auth.create({ username, email , password : hashedPasword })
-            //if(singupdData){
-              //    send email here  
-           // }else{give eror warning}
-            return res.status(200).json({singupdData})
+            //const singupdData = await Auth.create({ username, email , password : hashedPasword })
+            
+            const checkAuth = await Auth.find().or([{email : email}, {username : username}])
+
+            if(checkAuth.length > 0){
+                return res.status(500).json({response: "Username or email is registred. Please sign-in"})
+            }else{
+                const singupdData = await Auth.create({ username, email , password : hashedPasword })
+                return res.status(200).json({singupdData})
+            }
+
         }
     }catch(error){
         res.status(500).json({error})
