@@ -83,24 +83,7 @@ const adminGetInvestments = async(req, res)=>{
                 }
                         
             })
-                      
-           
-            //    const totalInvestment =  investments.reduce(function(accumulator, currentValue) {
-            //     return accumulator + currentValue;
-            //     }, 0);
-
-            //     const totalProfit =  profits.reduce(function(accumulator, currentValue) {
-            //     return accumulator + currentValue;
-            //     }, 0);
-
-            //      totalinvestmentAndProfit = totalInvestment + totalProfit
-              
-            // investFulldata.push({
-            //     'totalInvestment':totalInvestment, 
-            //     'totalProfit' : totalProfit, 
-            //     'totalinvestmentAndProfit' : totalinvestmentAndProfit
-            // })
-            
+                                  
             return investFulldata
             
     
@@ -121,58 +104,71 @@ const getInvestments = async(req, res)=>{
     const userId = id
    try{ 
         const investmentData = await Investment.find({userId : id, username : username})
-        
         if(!investmentData){
             return res.status(200).json({message : "Request error. Please retry."})
         }
 
-        function monthDiff(d1, d2) {
-            var months;
-            months = (d2.getFullYear() - d1.getFullYear()) * 12;
-            months -= d1.getMonth();
-            months += d2.getMonth();
-            return months <= 0 ? 0 : months;
+        function dateDiff(d1, d2) {
+            // var days;
+            // days = (d2.getFullYear() - d1.getFullYear()) * 365;
+            // days -= d1.getDate();
+            // days += d2.getDate();
+            // return days <= 0 ? 0 : days;
+
+            // let d1 = new Date().toISOString().slice(0, 10)
+            // let dOne = d1.toISOString().slice(0, 10)
+            // let dTwo = d2.toISOString().slice(0, 10)
+
+            var diffInTime = d2.getTime() - d1.getTime();
+            var diffInDate = diffInTime / (1000 * 3600 * 24);
+              
+            return diffInDate
         }
+
         const calcInvestment =async()=>{
         const thisPeriod = new Date()
         
         const investments = []
         const profits = []
         let totalinvestmentAndProfit = 0
+        
         const investFulldata = await investmentData.map(item =>{
                 const _id = item._id
                 const deposit = item.amount
-                const package = item.packageName
-                const interest = item.interestRate / 100
-                const currentDate = thisPeriod
-                // const currentDate = new Date(2022, 03, 10)
+                const packageName = item.packageName
+                const interest = item.interestRate 
+                const interestRate = item.interestRate / 100 / 30 // 100 to give percentage and 30 to give daily value
+                //const currentDate = new Date().toISOString().slice(0, 10)
+                const currentDate = new Date()
                 const investmentDate = item.createdAt
-                const maturityMonth = item.createdAt.getMonth() + 6  //6 or investment duration choosen for plan
-                const maturityDateNumber = new Date(item.createdAt).setMonth(maturityMonth)
-                let investmentDuration = monthDiff(investmentDate, currentDate)
-                const profitPerMonth = deposit * interest
-                let cumulativeProfit = profitPerMonth * investmentDuration
+                const maturityDate = item.createdAt.getDate() + 180  //6 or investment duration choosen for plan
+                const maturityDateNumber = new Date(item.createdAt).setDate(maturityDate)
+                let investmentDuration = dateDiff(investmentDate, currentDate)
+                const profitPerDay = deposit * interestRate
+                let cumulativeProfit = profitPerDay * investmentDuration
                 const maturityFullDate = new Date(maturityDateNumber)
                
+               console.log( investmentDuration, investmentDate, currentDate)
+
 
                 if(currentDate >= maturityFullDate){
-                    investmentDuration = 6  //6 or investment duration choosen for plan
-                    cumulativeProfit = profitPerMonth * investmentDuration
+                    investmentDuration = 180  //6 or investment duration choosen for plan
+                    cumulativeProfit = profitPerDay * investmentDuration
                     
-                    investments.push(item.amount)
-                    profits.push(profitPerMonth)   
-                    return({_id, deposit, package, interest, investmentDate, maturityFullDate, currentDate, investmentDate,
-                        investmentDuration, profitPerMonth, cumulativeProfit, userId, username})
+                    investments.push(item.deposit)
+                    profits.push(profitPerDay)   
+                    return({_id, deposit, packageName, interest, interestRate, investmentDate, maturityFullDate, currentDate,
+                     investmentDate, investmentDuration, profitPerDay, cumulativeProfit, userId, username})
                 }else{
-                    investments.push(item.amount)
-                    profits.push(profitPerMonth)   
-                    return({_id, deposit, package, interest, investmentDate, maturityFullDate, currentDate, investmentDate,
-                        investmentDuration, profitPerMonth, cumulativeProfit, userId, username})
+                    investments.push(item.deposit)
+                    profits.push(profitPerDay)   
+                    return({_id, deposit, packageName, interest, interestRate, investmentDate, maturityFullDate, currentDate, 
+                        investmentDate,investmentDuration, profitPerDay, cumulativeProfit, userId, username})
                 }
                         
 
-                // return({_id, deposit, package, interest, investmentDate, maturityFullDate, currentDate, investmentDate,
-                //      investmentDuration, profitPerMonth, cumulativeProfit, userId})
+                return({_id, deposit, packageName, interest, interestRate, investmentDate, maturityFullDate, currentDate, investmentDate,
+                     investmentDuration, profitPerDay, cumulativeProfit, userId})
             })
                        
             
@@ -186,11 +182,11 @@ const getInvestments = async(req, res)=>{
 
                 totalinvestmentAndProfit = totalInvestment + totalProfit
               
-            investFulldata.push({
-                'totalInvestment':totalInvestment, 
-                'totalProfit' : totalProfit, 
-                'totalinvestmentAndProfit' : totalinvestmentAndProfit
-            })
+            // investFulldata.push({
+            //     'totalInvestment':totalInvestment, 
+            //     'totalProfit' : totalProfit, 
+            //     'totalinvestmentAndProfit' : totalinvestmentAndProfit
+            // })
             return investFulldata
     
         }
@@ -220,83 +216,25 @@ const getInvestment = async(req, res)=>{
 const createInvestment = async(req, res)=>{
     const {id, username} = req.params
    try{ 
-        
-        const {amount} = req.body
-        const {packageName} = req.body
-        const {interestRate} = req.body
-        // const {username} = req.body
-        const userId = id
         const userData = await User.findOne({userId : id , username : username})
-
-
-
-        // const userProfile = await User.find({userId : id})
-        // const userInvestments = await Investment.find({userId : id})
-        // const userTransactions = await Transaction.find({userId : id})
-        // const userPaymentDetail = await PaymentDetail.find({userId : id})
-        
-
         if(!userData){
             return res.status(200).json({message : "User with given id not found."})
         }
-        // if(!userInvestments){
-        //     return userInvestments = []
-        // }
-        // if(!userTransactions){
-        //     return userTransactions = []
-        // }
-        // if(!userPaymentDetail){
-        //     return userPaymentDetail = {}
-        // }
-        // if(!userProfile && !userProfile.profilePicture){
-        //     return profilePicture = 'Profile Picture'
-        // }
-
-        // const d = new Date()
-        // const date = d.getDate()
-        // const month = d.getMonth()
-        // const year = d.getFullYear()
-
-        // const investmentsDate = new Date.now()
-        // const investmentMonth = investmentsDate.getMonth()
-
         const maturityDate = new Date();
         const thisPeriod = new Date();
         const thisMonth  = thisPeriod.getMonth()
         const maturityMonth = thisMonth + 6
         maturityDate.setMonth(maturityMonth);
-
-
-        // const userAccountBalance = investments.
-
-
-
-        // const getInvementDetails = async()=>{
-    
-        //     const profit = await userInvestments.map(item =>{
-        //         const deposit = item.amount
-        //         const package = item.packageName
-        //         const interest = item.interestRate / 100
-        //         const currentDate = thisPeriod
-        //         const maturityDate = maturityDate
-        //         const currentDration = currentDate - item.create
-        //         const profitValue = deposit * interest
-        //         const cumulativeProfit = profitValue * currentDration
-        //         return profitValue
-        //     })
-        // }
-        // getInvementDetails()
-
-    
         
         const invetmentInfo = {
-            amount : amount,
-            packageName : packageName,
-            interestRate : interestRate,
+            amount : req.body.amount,
+            packageName : req.body.packageName,
+            interestRate : req.body.interestRate,
             maturityDate : maturityDate,
-            userId : userId,
+            userId : id,
             username : username
         }
+        
         const investData = await Investment.create(invetmentInfo)
         res.status(200).json({investData})
     }catch(error){
